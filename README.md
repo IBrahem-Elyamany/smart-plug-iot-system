@@ -42,26 +42,26 @@ The embedded firmware executes a deterministic safety routine locally on the ESP
 
 * **Thermal Hazard Failsafe ($\ge 45.0^\circ\text{C}$):** Trips all 4 relays immediately, clears countdown timers, sounds the piezo alarm, and broadcasts an `OVERHEAT_WARNING` alert via MQTT. Resets only after internal cooling drops below $40.0^\circ\text{C}$.
 * **Grid Voltage Protection (Egyptian Standard: 220V $\pm10\%$):**
-  * **Brownout Cutoff ($<180\text{V}$):** Isolates all loads to prevent inductive motor overheating and current strain[cite: 1].
-  * **Overvoltage Cutoff ($>240\text{V}$):** Protects downstream power supplies against transient spikes[cite: 1].
+  * **Brownout Cutoff ($<180\text{V}$):** Isolates all loads to prevent inductive motor overheating and current strain.
+  * **Overvoltage Cutoff ($>240\text{V}$):** Protects downstream power supplies against transient spikes.
 * **Multi-Tier Overcurrent Protection:**
-  * **Outlet 1 Limit ($>8.5\text{A}$):** Prevents contact welding on Relay 1[cite: 1].
-  * **Total Strip Limit ($>12.0\text{A}$):** Enforces continuous ratings for internal $2\text{ mm}^2$ wiring harnesses to eliminate fire risks[cite: 1].
-* **Battery Float Auto-Cutoff:** Monitors Outlet 1; automatically terminates power if draw drops below $0.01\text{ A}$ for 5 continuous minutes ($300,000\text{ ms}$)[cite: 1].
+  * **Outlet 1 Limit ($>8.5\text{A}$):** Prevents contact welding on Relay 1.
+  * **Total Strip Limit ($>12.0\text{A}$):** Enforces continuous ratings for internal $2\text{ mm}^2$ wiring harnesses to eliminate fire risks.
+* **Battery Float Auto-Cutoff:** Monitors Outlet 1; automatically terminates power if draw drops below $0.01\text{ A}$ for 5 continuous minutes ($300,000\text{ ms}$).
 
 ---
 
 ## ⚙️ Mathematical Signal Processing & Algorithms
 
 ### 1. True RMS Current with Dynamic Auto-Zero Shift
-To eliminate zero-drift errors and reference voltage fluctuations on the ADC[cite: 1]:
+To eliminate zero-drift errors and reference voltage fluctuations on the ADC:
 
 $$\text{autoZero} = \frac{1}{N} \sum_{i=1}^{N} V_{\text{raw}}[i]$$
 
 $$I_{\text{RMS}} = \sqrt{\frac{1}{N} \sum_{i=1}^{N} \left(V_{\text{raw}}[i] - \text{autoZero}\right)^2}$$
 
 ### 2. Multiplexer Settling & ADC Discharge
-To prevent charge retention inside the ESP8266 ADC sampling capacitor across multiplexer switches[cite: 1]:
+To prevent charge retention inside the ESP8266 ADC sampling capacitor across multiplexer switches:
 
 ```cpp
 selectMuxChannel(channel);
@@ -72,19 +72,19 @@ analogRead(MUX_ANALOG_PIN);  // Dummy read to discharge ADC capacitor
 ## 📡 MQTT Telemetry & Topic Interface
 
 ### Ingress (Control & Commands)
-* `smartplug/sub1` .. `4`: Remote toggle payloads (`1` / `0`) to independently switch Relays 1 through 4[cite: 1].
-* `smartplug/timer1` .. `4`: Sets dedicated countdown timer durations in seconds for each outlet[cite: 1].
-* `smartplug/check_status`: Forces an instantaneous full telemetry and state synchronization across all topics[cite: 1].
+* `smartplug/sub1` .. `4`: Remote toggle payloads (`1` / `0`) to independently switch Relays 1 through 4.
+* `smartplug/timer1` .. `4`: Sets dedicated countdown timer durations in seconds for each outlet.
+* `smartplug/check_status`: Forces an instantaneous full telemetry and state synchronization across all topics.
 
 ### Egress (Telemetry Broadcasts)
-* `smartplug/state1` .. `4`: Real-time operational state feedback (`1` / `0`) for each relay channel[cite: 1].
-* `smartplug/voltage`: Calculated AC mains True RMS line voltage in Volts ($\text{V}$)[cite: 1].
-* `smartplug/current_total`: Total aggregate load current draw in Amperes ($\text{A}$)[cite: 1].
-* `smartplug/current_outlet1`: Dedicated branch current consumption for Outlet 1 ($\text{A}$)[cite: 1].
-* `smartplug/power_total`: Active total power consumption in Watts ($\text{W}$)[cite: 1].
-* `smartplug/temp`: Real-time internal ambient temperature telemetry in Celsius ($^\circ\text{C}$)[cite: 1].
-* `smartplug/rem1` .. `4`: Live remaining countdown time on active outlet timers (in seconds)[cite: 1].
-* `smartplug/alerts`: Broadcasts real-time safety trip notifications (`OVERHEAT_WARNING`, `OVERVOLTAGE`, `OVERLOAD`)[cite: 1].
+* `smartplug/state1` .. `4`: Real-time operational state feedback (`1` / `0`) for each relay channel.
+* `smartplug/voltage`: Calculated AC mains True RMS line voltage in Volts ($\text{V}$).
+* `smartplug/current_total`: Total aggregate load current draw in Amperes ($\text{A}$).
+* `smartplug/current_outlet1`: Dedicated branch current consumption for Outlet 1 ($\text{A}$).
+* `smartplug/power_total`: Active total power consumption in Watts ($\text{W}$).
+* `smartplug/temp`: Real-time internal ambient temperature telemetry in Celsius ($^\circ\text{C}$).
+* `smartplug/rem1` .. `4`: Live remaining countdown time on active outlet timers (in seconds).
+* `smartplug/alerts`: Broadcasts real-time safety trip notifications (`OVERHEAT_WARNING`, `OVERVOLTAGE`, `OVERLOAD`).
 
 ---
 
@@ -93,14 +93,14 @@ analogRead(MUX_ANALOG_PIN);  // Dummy read to discharge ADC capacitor
 | Enclosed Functional Unit | Internal Wiring & Power Electronics |
 | :---: | :---: |
 | ![Enclosed Casing](assets/hardware-casing.jpg) | ![Internal Wiring](assets/hardware-internals.jpg) |
-| *Fully enclosed prototype with manual switches & status LEDs*[cite: 1] | *Internal optoisolated relays, sensors, NodeMCU & AC-DC conversion*[cite: 1] |
+| *Fully enclosed prototype with manual switches & status LEDs* | *Internal optoisolated relays, sensors, NodeMCU & AC-DC conversion* |
 
 ---
 
 ## 📱 Mobile Application Interfaces
 
 ### 1. Main Dashboard & Global Energy Monitoring
-Real-time telemetry showing live AC mains voltage, total current draw, internal operating temperature, and global master controls for all connected outlets[cite: 1].
+Real-time telemetry showing live AC mains voltage, total current draw, internal operating temperature, and global master controls for all connected outlets.
 
 <p align="center">
   <img src="assets/app-main-dashboard.jpg" width="320" alt="Main Dashboard Screen">
@@ -109,12 +109,12 @@ Real-time telemetry showing live AC mains voltage, total current draw, internal 
 ---
 
 ### 2. Per-Outlet Control & Smart Countdown Timers
-Independent power toggling per socket alongside configurable countdown schedules that display live remaining-time feedback directly on the interface[cite: 1].
+Independent power toggling per socket alongside configurable countdown schedules that display live remaining-time feedback directly on the interface.
 
 | Socket Toggle & State | Live Countdown & Timer Setup |
 | :---: | :---: |
 | ![Socket Control](assets/app-socket-control.jpg) | ![Countdown Timer](assets/app-socket-timer.jpg) |
-| *Individual socket control & telemetry*[cite: 1] | *Real-time countdown timer configuration*[cite: 1] |
+| *Individual socket control & telemetry* | *Real-time countdown timer configuration* |
 
 ---
 
@@ -123,16 +123,16 @@ Independent power toggling per socket alongside configurable countdown schedules
 | Real-Time Consumption & Limit Thresholds | On-Device Captive Portal Configuration |
 | :---: | :---: |
 | ![Analytics and Limits](assets/app-analytics-limits.jpg) | ![Wi-Fi Provisioning Portal](assets/app-wifi-config.jpg) |
-| *Total live wattage, grid limits & Outlet 1 usage*[cite: 1] | *Zero-code onboarding web interface via onboard AP*[cite: 1] |
+| *Total live wattage, grid limits & Outlet 1 usage* | *Zero-code onboarding web interface via onboard AP* |
 
 ---
 
 ## 🎥 Live System Demonstration
 
-* **Field Test & Functional Video:** [Watch Live Demonstration Link](https://bit.ly/44XcFuD)[cite: 1]
+* **Field Test & Functional Video:** [Watch Live Demonstration Link](https://bit.ly/44XcFuD)
 
 ---
 
 ## 📄 License & Attribution
 
-Distributed under the MIT License. Designed and engineered by **SmartPlug Team** (Ain Shams University)[cite: 1].
+Distributed under the MIT License. Designed and engineered by **SmartPlug Team** (Ain Shams University).
